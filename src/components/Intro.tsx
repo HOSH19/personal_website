@@ -31,25 +31,25 @@ export default function Intro() {
     {
       name: "GitHub",
       icon: Github,
-      url: "https://github.com/yourusername",
+      url: "https://github.com/HOSH19",
       color: "hover:text-red-400"
     },
     {
       name: "LinkedIn",
       icon: Linkedin,
-      url: "https://linkedin.com/in/yourusername",
+      url: "www.linkedin.com/in/shu-han-ho-910509200",
       color: "hover:text-blue-400"
     },
     {
       name: "Instagram",
       icon: Instagram,
-      url: "https://instagram.com/yourusername",
+      url: "https://www.instagram.com/shu_hannn/",
       color: "hover:text-pink-400"
     },
     {
       name: "Telegram",
       icon: Send,
-      url: "https://t.me/yourusername",
+      url: "https://t.me/ShuHannn",
       color: "hover:text-cyan-400"
     }
   ];
