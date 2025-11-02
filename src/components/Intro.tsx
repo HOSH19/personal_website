@@ -90,8 +90,9 @@ export default function Intro() {
         {/* Main Words */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8">
           {words.map((word, index) => (
-            <div key={word.text} className="flex items-center">
+            <>
               <motion.div
+                key={word.text}
                 onMouseEnter={() => setHoveredWord(index)}
                 onMouseLeave={() => setHoveredWord(null)}
                 onClick={() => scrollToSection(word.sectionId)}
@@ -116,9 +117,9 @@ export default function Intro() {
                 />
               </motion.div>
               {index < words.length - 1 && (
-                <span className="text-white/30 mx-2 md:mx-4 text-5xl md:text-7xl lg:text-8xl font-bold">.</span>
+                <span key={`dot-${index}`} className="text-white/30 text-5xl md:text-7xl lg:text-8xl font-bold">.</span>
               )}
-            </div>
+            </>
           ))}
         </div>
 
