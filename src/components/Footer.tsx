@@ -34,22 +34,9 @@ export function Footer() {
             transition={{ delay: 0.2 }}
             className="text-xl text-white max-w-2xl mx-auto mb-10"
           >
-            Whether you're interested in AI development, photography services, 
-            or music production, I'd love to hear from you.
+            Whether you're interested in AI development, photography, 
+            or music, I'd love to hear from you.
           </motion.p>
-          
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-gray-900 rounded-full font-bold text-lg shadow-2xl hover:shadow-xl transition-all"
-          >
-            <Mail className="w-5 h-5" />
-            Get in Touch
-          </motion.button>
         </div>
 
         {/* Social links */}
@@ -92,42 +79,18 @@ export function Footer() {
         />
 
         {/* Bottom section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-white text-sm">
+        <div className="flex flex-col items-center justify-center gap-6 text-white text-sm text-center">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 justify-center"
           >
             © 2025 Shu Han. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> and code
           </motion.p>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-6"
-          >
-            <a href="#" className="hover:text-white/70 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white/70 transition-colors">Terms</a>
-            <a href="#" className="hover:text-white/70 transition-colors">Contact</a>
-          </motion.div>
+
         </div>
       </div>
-
-      {/* Scroll to top button */}
-      <motion.button
-        onClick={scrollToTop}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        whileHover={{ scale: 1.1, y: -2 }}
-        whileTap={{ scale: 0.9 }}
-        viewport={{ once: true }}
-        className="absolute bottom-8 right-8 w-12 h-12 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all text-white"
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="w-5 h-5" />
-      </motion.button>
     </footer>
   );
 }
