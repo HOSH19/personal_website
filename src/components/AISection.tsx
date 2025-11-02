@@ -1,0 +1,333 @@
+import { Brain, Code, Sparkles, GitBranch, ExternalLink, Terminal, Cpu, Zap } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { useState, useRef } from "react";
+
+export function AISection() {
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [selectedProject, setSelectedProject] = useState<number | null>(0);
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8]);
+
+  const projects = [
+    {
+      title: "RAG for Computer Use Agents",
+      description: "Built dynamic Retrieval-Augmented Generation for Computer Use Agent framework at CSIT.",
+      details: [
+        "Developed agentic/dynamic RAG for UI-TARS agent framework using LangChain and ChromaDB",
+        "Re-engineered prompts to increase agent contextual accuracy",
+        "Conducted inference on multiple models"
+      ],
+      tags: ["LangChain", "ChromaDB", "Crawl4AI"],
+      icon: Brain,
+      metrics: { framework: "UI-TARS", models: "o4-mini, Sonnet-4, UI-TARS-1.5-7b, Qwen2.5-VL-7b-Instruct" },
+      color: "from-blue-500 to-cyan-500",
+      bgGradient: "from-blue-500/10 to-cyan-500/10"
+    },
+    {
+      title: "LLM Finetuning for AMR Parsing",
+      description: "Research on finetuning Large Language Models for Abstract Meaning Representation at UCL.",
+      details: [
+        "Finetuned 4 open-source LLMs (LLaMA-3.2, Phi-3.5, DeepSeek-R1-LLaMA-Distilled, Gemma-2)",
+        "Achieved SMATCH F1: 0.804 on LDC2020T02 dataset, matching SOTA parsers like APT+ Silver",
+        "Conducted inference on 4 models using Silver Maximum Bayes SMATCH Ensemble (MBSE) Silver data."
+      ],
+      tags: ["PyTorch", "Transformers", "Wandb"],
+      icon: Sparkles,
+      metrics: { SMATCH_F1: "0.804", publication: "arXiv 2025" },
+      publicationUrl: "https://arxiv.org/abs/2508.05028",
+      color: "from-purple-500 to-pink-500",
+      bgGradient: "from-purple-500/10 to-pink-500/10"
+    },
+    {
+      title: "Multimodal Vision Pipeline",
+      description: "Image generation and classification pipeline using state-of-the-art vision models at DSTA.",
+      details: [
+        "Built multi-LLM image generation pipeline to beat SOTA detectors (e.g. Hive)",
+        "Finetuned Idefics2-8B for image modification classification tasks"
+      ],
+      tags: ["Stable Diffusion", "Florence-2", "TorchVision"],
+      icon: Code,
+      metrics: { SOTA_detection: "Beat Hive", models: "SD3, FLUX, Florence-2, Idefics2-8B" },
+      color: "from-orange-500 to-red-500",
+      bgGradient: "from-orange-500/10 to-red-500/10"
+    },
+  ];
+
+  const skills = [
+    { name: "PyTorch", icon: Brain },
+    { name: "Transformers", icon: Sparkles },
+    { name: "LangChain", icon: GitBranch },
+    { name: "OpenCV", icon: Zap },
+    { name: "Scikit-learn", icon: Cpu },
+    { name: "TorchVision", icon: Code },
+    { name: "Stable Diffusion", icon: Sparkles },
+    { name: "ChromaDB", icon: Terminal },
+    { name: "Mediapipe", icon: Zap },
+    { name: "RAG Systems", icon: Brain },
+    { name: "NLP & LLMs", icon: Sparkles },
+    { name: "Computer Vision", icon: Code }
+  ];
+
+  return (
+    <section ref={sectionRef} id="ai" className="min-h-screen py-20 px-4 relative overflow-hidden">
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-blue-400/50 rounded-full"
+            initial={{ 
+              x: Math.random() * window.innerWidth, 
+              y: Math.random() * window.innerHeight,
+              opacity: 0.1
+            }}
+            animate={{
+              y: [null, Math.random() * window.innerHeight],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 10 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section header */}
+        <motion.div
+          style={{ opacity, scale }}
+          className="text-center mb-20"
+        >
+          <motion.div 
+            initial={{ scale: 0, rotate: -180 }}
+            whileInView={{ scale: 1, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="inline-flex items-center gap-3 mb-6"
+          >
+            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg">
+              <Code className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-5xl font-bold text-white">
+              Code
+            </h2>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="text-xl text-white max-w-3xl mx-auto"
+          >
+            Research and development in AI/ML systems, from agentic RAG frameworks to 
+            state-of-the-art LLM finetuning and multimodal vision models.
+          </motion.p>
+        </motion.div>
+
+        {/* Projects showcase - Split screen design */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-20">
+          {/* Left: Project selector */}
+          <div className="space-y-4">
+            {projects.map((project, index) => {
+              const IconComponent = project.icon;
+              const isSelected = selectedProject === index;
+              const isHovered = hoveredProject === index;
+              
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  onMouseEnter={() => setHoveredProject(index)}
+                  onMouseLeave={() => setHoveredProject(null)}
+                  onClick={() => setSelectedProject(index)}
+                  className="cursor-pointer relative"
+                >
+                  <motion.div
+                    animate={{
+                      scale: isSelected ? 1.02 : isHovered ? 1.01 : 1,
+                    }}
+                    className={`p-6 rounded-2xl border-2 transition-all duration-300 backdrop-blur-sm ${
+                      isSelected 
+                        ? 'border-black/30 bg-gray-800/70 shadow-xl' 
+                        : 'border-transparent bg-gray-800/50 hover:bg-gray-800/70 shadow-md hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <motion.div
+                        animate={{
+                          rotate: isHovered ? 360 : 0,
+                          scale: isSelected ? 1.1 : 1
+                        }}
+                        transition={{ duration: 0.5 }}
+                        className="p-3 rounded-xl bg-white/20 backdrop-blur-sm shadow-lg"
+                      >
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </motion.div>
+                      
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-2">
+                          {project.title}
+                        </h3>
+                        <p className="text-white text-sm mb-3">
+                          {project.description}
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          {project.tags.map((tag, tagIndex) => (
+                            <motion.span
+                              key={tagIndex}
+                              initial={{ scale: 0 }}
+                              whileInView={{ scale: 1 }}
+                              transition={{ delay: 0.3 + tagIndex * 0.1 }}
+                              className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-gray-700 to-gray-600 text-white rounded-full"
+                            >
+                              {tag}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <motion.div
+                        animate={{ x: isSelected ? 5 : 0 }}
+                        className="text-white"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </motion.div>
+                    </div>
+
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Right: Project details */}
+          <div className="lg:sticky lg:top-24 h-fit">
+            <AnimatePresence mode="wait">
+              {selectedProject !== null && (
+                <motion.div
+                  key={selectedProject}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-gray-700"
+                >
+                  
+                  <div className="p-8">
+                    <h4 className="text-2xl font-bold text-white mb-4">
+                      Project Details
+                    </h4>
+                    <ul className="text-white leading-relaxed mb-6 space-y-3">
+                      {projects[selectedProject].details.map((detail, index) => (
+                        <motion.li
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 * index }}
+                          className="flex items-start gap-3"
+                        >
+                          <span className="text-white mt-1 font-bold">•</span>
+                          <span>{detail}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      {Object.entries(projects[selectedProject].metrics).map(([key, value], index) => {
+                        const isPublication = key === "publication";
+                        const MetricContainer = isPublication ? motion.a : motion.div;
+                        const extraProps = isPublication 
+                          ? { 
+                              href: projects[selectedProject].publicationUrl,
+                              target: "_blank",
+                              rel: "noopener noreferrer"
+                            } 
+                          : {};
+                        
+                        return (
+                          <MetricContainer
+                            key={key}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.1 + index * 0.1, type: "spring" }}
+                            className={`p-4 rounded-xl bg-gray-800/70 backdrop-blur-sm border border-gray-700 ${
+                              isPublication ? 'cursor-pointer hover:border-white/30 transition-colors group' : ''
+                            }`}
+                            {...extraProps}
+                          >
+                            <div className="text-2xl font-bold text-white flex items-center gap-2">
+                              {value}
+                              {isPublication && (
+                                <ExternalLink className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              )}
+                            </div>
+                            <div className="text-sm text-white/70 capitalize mt-1">{key.replace(/_/g, ' ')}</div>
+                          </MetricContainer>
+                        );
+                      })}
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full py-3 px-6 rounded-xl bg-white text-gray-900 font-medium shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
+                    >
+                      View Project <ExternalLink className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Skills grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative"
+        >
+          <h3 className="text-3xl font-bold text-center text-white mb-10">
+            Technical Expertise
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {skills.map((skill, index) => {
+              const IconComponent = skill.icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.1, y: -5 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05, type: "spring", stiffness: 300 }}
+                  className="p-4 bg-gray-800/70 backdrop-blur-sm rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer group"
+                >
+                  <IconComponent className="w-6 h-6 text-white mb-2 mx-auto group-hover:scale-110 transition-transform" />
+                  <p className="text-sm font-medium text-white text-center">
+                    {skill.name}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
