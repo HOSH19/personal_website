@@ -37,7 +37,7 @@ export default function Intro() {
     {
       name: "LinkedIn",
       icon: Linkedin,
-      url: "www.linkedin.com/in/shu-han-ho-910509200",
+      url: "https://www.linkedin.com/in/shu-han-ho-910509200",
       color: "hover:text-blue-400"
     },
     {

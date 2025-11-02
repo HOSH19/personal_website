@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 export function Footer() {
   const socialLinks = [
     { icon: Github, href: "https://github.com/HOSH19", label: "GitHub", color: "hover:text-gray-900" },
-    { icon: Linkedin, href: "www.linkedin.com/in/shu-han-ho-910509200", label: "LinkedIn", color: "hover:text-blue-600" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/shu-han-ho-910509200", label: "LinkedIn", color: "hover:text-blue-600" },
     { icon: Instagram, href: "https://www.instagram.com/shu_hannn/", label: "Instagram", color: "hover:text-pink-600" },
     { icon: Mail, href: "mailto:hoshuhan@gmail.com", label: "Email", color: "hover:text-red-600" },
   ];
