@@ -15,7 +15,7 @@ export default function App() {
       {/* Fixed Video Background for entire website */}
       <div className="fixed inset-0 z-0">
         <video
-          src="/images/photography/vid2.mov"
+          src="/images/photography/vid.mp4"
           className="w-full h-full object-cover"
           autoPlay
           muted
