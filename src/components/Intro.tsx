@@ -61,30 +61,7 @@ export default function Intro() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Animated background particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{
-              x: Math.random() * 100 + '%',
-              y: Math.random() * 100 + '%',
-              opacity: Math.random() * 0.5,
-            }}
-            animate={{
-              y: [null, Math.random() * 100 + '%'],
-              opacity: [null, Math.random() * 0.5, 0],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
-      </div>
-
+        
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-7xl w-full flex flex-col items-center justify-center">
         {/* Main Words */}
