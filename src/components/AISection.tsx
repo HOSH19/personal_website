@@ -65,13 +65,13 @@ export function AISection() {
     { name: "LangChain", icon: GitBranch },
     { name: "OpenCV", icon: Zap },
     { name: "Scikit-learn", icon: Cpu },
-    { name: "TorchVision", icon: Code },
+    { name: "Wandb", icon: Code },
     { name: "Stable Diffusion", icon: Sparkles },
     { name: "ChromaDB", icon: Terminal },
     { name: "Mediapipe", icon: Zap },
-    { name: "RAG Systems", icon: Brain },
-    { name: "NLP & LLMs", icon: Sparkles },
-    { name: "Computer Vision", icon: Code }
+    { name: "PyAutoGUI", icon: Brain },
+    { name: "NutJS", icon: Sparkles },
+    { name: "Nuitka", icon: Code }
   ];
 
   return (
