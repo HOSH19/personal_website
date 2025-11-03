@@ -38,9 +38,7 @@ export function MusicSection() {
           >
             {/* Description */}
             <p className="text-lg text-white leading-relaxed">
-              Acoustic/Classical Guitarist.
-              Bassist.
-              Keyboardist.
+              Dabbles in acoustic guitar/bass guitar/keyboard sometimes! 
             </p>
           </motion.div>
 

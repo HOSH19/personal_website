@@ -128,8 +128,8 @@ export function AISection() {
             transition={{ delay: 0.3 }}
             className="text-xl text-white max-w-3xl mx-auto"
           >
-            Research and development in AI/ML systems, from agentic RAG frameworks to 
-            state-of-the-art LLM finetuning and multimodal vision models.
+            Experiences in LLM Finetuning and AI Agents. <br />
+            Currently interested in Reinforcement Learning and Model Fairness!
           </motion.p>
         </motion.div>
 

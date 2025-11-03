@@ -16,14 +16,20 @@ export default function App() {
       <div className="fixed inset-0 z-0">
         <video
           src="/images/photography/vid.mp4"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover pointer-events-none"
           autoPlay
           muted
           loop
           playsInline
+          controls={false}
+          disablePictureInPicture
+          webkit-playsinline="true"
+          style={{
+            objectFit: 'cover',
+          }}
         />
         {/* Subtle dark overlay */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
       </div>
 
       {/* All content above video */}
