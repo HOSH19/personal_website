@@ -1,4 +1,4 @@
-import { Brain, Code, Sparkles, GitBranch, ExternalLink, Terminal, Cpu, Zap } from "lucide-react";
+import { Brain, Code, Sparkles, GitBranch, ExternalLink, Terminal, Cpu, Zap, X, Github } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { useState, useRef } from "react";
 
@@ -21,11 +21,12 @@ export function AISection() {
       details: [
         "Developed agentic/dynamic RAG for UI-TARS agent framework using LangChain and ChromaDB",
         "Re-engineered prompts to increase agent contextual accuracy",
-        "Conducted inference on multiple models"
+        "Conducted inference on respective models"
       ],
       tags: ["LangChain", "ChromaDB", "Crawl4AI"],
       icon: Brain,
       metrics: { framework: "UI-TARS", models: "o4-mini, Sonnet-4, UI-TARS-1.5-7b, Qwen2.5-VL-7b-Instruct" },
+      githubUrl: "https://github.com/HOSH19/BurpSuite-CUA-Final",
       color: "from-blue-500 to-cyan-500",
       bgGradient: "from-blue-500/10 to-cyan-500/10"
     },
@@ -41,6 +42,7 @@ export function AISection() {
       icon: Sparkles,
       metrics: { SMATCH_F1: "0.804", publication: "arXiv 2025" },
       publicationUrl: "https://arxiv.org/abs/2508.05028",
+      githubUrl: "https://github.com/HOSH19/AMR_LLM_Finetuning",
       color: "from-purple-500 to-pink-500",
       bgGradient: "from-purple-500/10 to-pink-500/10"
     },
@@ -70,8 +72,8 @@ export function AISection() {
     { name: "ChromaDB", icon: Terminal },
     { name: "Mediapipe", icon: Zap },
     { name: "PyAutoGUI", icon: Brain },
-    { name: "NutJS", icon: Sparkles },
-    { name: "Nuitka", icon: Code }
+    { name: "NutJS", icon: Code },
+    { name: "Nuitka", icon: Sparkles }
   ];
 
   return (
@@ -128,13 +130,13 @@ export function AISection() {
             transition={{ delay: 0.3 }}
             className="text-xl text-white max-w-3xl mx-auto"
           >
-            Experiences in LLM Finetuning and AI Agents. <br />
+            Experiences in LLM Supervised Finetuning and AI Agents. <br />
             Currently interested in Reinforcement Learning and Model Fairness!
           </motion.p>
         </motion.div>
 
         {/* Projects showcase - Split screen design */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-20">
+        <div className="grid lg:grid-cols-2 gap-8 mb-20 relative">
           {/* Left: Project selector */}
           <div className="space-y-4">
             {projects.map((project, index) => {
@@ -198,13 +200,6 @@ export function AISection() {
                           ))}
                         </div>
                       </div>
-
-                      <motion.div
-                        animate={{ x: isSelected ? 5 : 0 }}
-                        className="text-white"
-                      >
-                        <ExternalLink className="w-5 h-5" />
-                      </motion.div>
                     </div>
 
                   </motion.div>
@@ -214,7 +209,7 @@ export function AISection() {
           </div>
 
           {/* Right: Project details */}
-          <div className="lg:sticky lg:top-24 h-fit">
+          <div className="hidden lg:block lg:sticky lg:top-24 h-fit">
             <AnimatePresence mode="wait">
               {selectedProject !== null && (
                 <motion.div
@@ -258,40 +253,140 @@ export function AISection() {
                           : {};
                         
                         return (
-                          <MetricContainer
-                            key={key}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.1 + index * 0.1, type: "spring" }}
-                            className={`p-4 rounded-xl bg-gray-800/70 backdrop-blur-sm border border-gray-700 ${
-                              isPublication ? 'cursor-pointer hover:border-white/30 transition-colors group' : ''
-                            }`}
-                            {...extraProps}
-                          >
-                            <div className="text-2xl font-bold text-white flex items-center gap-2">
-                              {value}
-                              {isPublication && (
-                                <ExternalLink className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                              )}
-                            </div>
-                            <div className="text-sm text-white/70 capitalize mt-1">{key.replace(/_/g, ' ')}</div>
-                          </MetricContainer>
+                        <MetricContainer
+                          key={key}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.1 + index * 0.1, type: "spring" }}
+                          className={`p-4 rounded-xl backdrop-blur-sm border ${
+                            isPublication 
+                              ? 'bg-red-500/20 border-red-400/50 cursor-pointer hover:bg-red-500/30 hover:border-red-400/70 transition-colors group' 
+                              : 'bg-gray-800/70 border-gray-700'
+                          }`}
+                          {...extraProps}
+                        >
+                          <div className="text-2xl font-bold text-white flex items-center gap-2">
+                            {value}
+                            {isPublication && (
+                              <ExternalLink className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <div className="text-sm text-white/70 capitalize mt-1">{key.replace(/_/g, ' ')}</div>
+                        </MetricContainer>
                         );
                       })}
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full py-3 px-6 rounded-xl bg-white text-gray-900 font-medium shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
-                    >
-                      View Project <ExternalLink className="w-4 h-4" />
-                    </motion.button>
+                    {projects[selectedProject].githubUrl && (
+                      <motion.a
+                        href={projects[selectedProject].githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02, x: 5 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full py-3 px-6 rounded-xl bg-white text-gray-900 font-medium shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
+                      >
+                        GitHub <Github className="w-6 h-6" />
+                      </motion.a>
+                    )}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
+
+          {/* Mobile: Fixed bottom sheet for project details */}
+          <AnimatePresence>
+            {selectedProject !== null && (
+              <motion.div
+                key={`mobile-${selectedProject}`}
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-800/95 backdrop-blur-md rounded-t-3xl shadow-2xl border-t border-gray-700 max-h-[70vh] overflow-y-auto"
+              >
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-2xl font-bold text-white">
+                      Project Details
+                    </h4>
+                    <button
+                      onClick={() => setSelectedProject(null)}
+                      className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                    >
+                      <X className="w-6 h-6 text-white" />
+                    </button>
+                  </div>
+                  
+                  <ul className="text-white leading-relaxed mb-6 space-y-3">
+                    {projects[selectedProject].details.map((detail, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 * index }}
+                        className="flex items-start gap-3"
+                      >
+                        <span className="text-white mt-1 font-bold">•</span>
+                        <span>{detail}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {Object.entries(projects[selectedProject].metrics).map(([key, value], index) => {
+                      const isPublication = key === "publication";
+                      const MetricContainer = isPublication ? motion.a : motion.div;
+                      const extraProps = isPublication 
+                        ? { 
+                            href: projects[selectedProject].publicationUrl,
+                            target: "_blank",
+                            rel: "noopener noreferrer"
+                          } 
+                        : {};
+                      
+                      return (
+                        <MetricContainer
+                          key={key}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.1 + index * 0.1, type: "spring" }}
+                          className={`p-4 rounded-xl backdrop-blur-sm border ${
+                            isPublication 
+                              ? 'bg-red-500/20 border-red-400/50 cursor-pointer hover:bg-red-500/30 hover:border-red-400/70 transition-colors group' 
+                              : 'bg-gray-800/70 border-gray-700'
+                          }`}
+                          {...extraProps}
+                        >
+                          <div className="text-2xl font-bold text-white flex items-center gap-2">
+                            {value}
+                            {isPublication && (
+                              <ExternalLink className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <div className="text-sm text-white/70 capitalize mt-1">{key.replace(/_/g, ' ')}</div>
+                        </MetricContainer>
+                      );
+                    })}
+                  </div>
+
+                  {projects[selectedProject].githubUrl && (
+                    <motion.a
+                      href={projects[selectedProject].githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full py-3 px-6 rounded-xl bg-white text-gray-900 font-medium shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
+                    >
+                      GitHub <Github className="w-6 h-6" />
+                    </motion.a>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Skills grid */}
@@ -302,7 +397,7 @@ export function AISection() {
           className="relative"
         >
           <h3 className="text-3xl font-bold text-center text-white mb-10">
-            Technical Expertise
+            Libraries & Frameworks
           </h3>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -313,12 +408,16 @@ export function AISection() {
                   key={index}
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.1, y: -5 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, type: "spring", stiffness: 300 }}
-                  className="p-4 bg-gray-800/70 backdrop-blur-sm rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer group"
+                  className="p-4 bg-gray-800/70 backdrop-blur-sm rounded-xl shadow-md cursor-pointer"
                 >
-                  <IconComponent className="w-6 h-6 text-white mb-2 mx-auto group-hover:scale-110 transition-transform" />
+                  <motion.div
+                    whileHover={{ scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  >
+                    <IconComponent className="w-6 h-6 text-white mb-2 mx-auto" />
+                  </motion.div>
                   <p className="text-sm font-medium text-white text-center">
                     {skill.name}
                   </p>
