@@ -16,14 +16,13 @@ export default function App() {
       <div className="fixed inset-0 z-0">
         <video
           src="/images/photography/vid.mp4"
-          className="w-full h-full object-cover pointer-events-none"
+          className="w-full h-full object-cover pointer-events-none [&::-webkit-media-controls]:hidden [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
           autoPlay
           muted
           loop
           playsInline
-          controls={false}
           disablePictureInPicture
-          webkit-playsinline="true"
+          preload="auto"
           style={{
             objectFit: 'cover',
           }}
