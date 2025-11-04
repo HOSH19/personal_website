@@ -1,20 +1,27 @@
 import { Brain, Code, Sparkles, GitBranch, ExternalLink, Terminal, Cpu, Zap, X, Github } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { useState, useRef, useEffect } from "react";
-import { useIsMobile } from "./ui/use-mobile";
 
 export function AISection() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const sectionRef = useRef(null);
-  const isMobile = useIsMobile();
 
-  // Set first project as selected on desktop only
+  // Set first project as selected on desktop only, after mount
   useEffect(() => {
-    if (!isMobile && selectedProject === null) {
-      setSelectedProject(0);
+    if (!isInitialized) {
+      // Check on next frame to ensure mobile detection has run
+      requestAnimationFrame(() => {
+        const isDesktop = window.innerWidth >= 768;
+        if (isDesktop) {
+          setSelectedProject(0);
+        }
+        setIsInitialized(true);
+      });
     }
-  }, [isMobile, selectedProject]);
+  }, [isInitialized]);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
