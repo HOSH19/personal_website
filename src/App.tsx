@@ -12,29 +12,56 @@ export default function App() {
   const containerRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Hide video controls, especially if autoplay is prevented
+  // Hide video controls aggressively - compatible with older Safari versions
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const hideControls = () => {
-      video.style.setProperty('-webkit-media-controls', 'none', 'important');
-      video.style.setProperty('-webkit-media-controls-overlay-play-button', 'none', 'important');
+      // Comprehensive webkit control hiding (works across Safari versions)
+      const properties = [
+        '-webkit-media-controls',
+        '-webkit-media-controls-overlay-play-button',
+        '-webkit-media-controls-panel',
+        '-webkit-media-controls-play-button',
+        '-webkit-media-controls-start-playback-button'
+      ];
+      
+      properties.forEach(prop => {
+        video.style.setProperty(prop, 'none', 'important');
+      });
+
+      // Force remove any controls attribute (older Safari fallback)
+      video.removeAttribute('controls');
+      video.setAttribute('controls', 'false');
     };
 
-    // Hide controls immediately
+    // Hide controls immediately and repeatedly
     hideControls();
+    
+    // Use requestAnimationFrame to continuously hide (catches late-appearing controls)
+    let rafId: number;
+    const continuousHide = () => {
+      hideControls();
+      rafId = requestAnimationFrame(continuousHide);
+    };
+    rafId = requestAnimationFrame(continuousHide);
 
-    // Hide controls on key video events (without interfering with loading)
-    video.addEventListener('loadstart', hideControls);
-    video.addEventListener('loadeddata', hideControls);
-    video.addEventListener('play', hideControls);
+    // Hide controls on all video lifecycle events
+    const videoEvents = ['loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'play', 'playing', 'pause'];
+    videoEvents.forEach((event) => {
+      video.addEventListener(event, hideControls, { passive: true });
+    });
+
+    // Hide on any user interaction (before controls can appear)
+    const interactionEvents = ['touchstart', 'touchmove', 'touchend', 'click', 'scroll'];
+    interactionEvents.forEach((event) => {
+      document.addEventListener(event, hideControls, { passive: true });
+    });
 
     // Try to play, and hide controls if autoplay fails
     video.play().catch(() => {
-      // Autoplay prevented - hide controls anyway
       hideControls();
-      // Play on first user interaction
       const playOnInteraction = () => {
         video.play();
         hideControls();
@@ -43,15 +70,15 @@ export default function App() {
       document.addEventListener('click', playOnInteraction, { once: true });
     });
 
-    // Also hide on scroll (since you mentioned it disappears when scrolling)
-    const hideOnScroll = () => hideControls();
-    window.addEventListener('scroll', hideOnScroll, { passive: true });
-
+    // Cleanup
     return () => {
-      video.removeEventListener('loadstart', hideControls);
-      video.removeEventListener('loadeddata', hideControls);
-      video.removeEventListener('play', hideControls);
-      window.removeEventListener('scroll', hideOnScroll);
+      cancelAnimationFrame(rafId);
+      videoEvents.forEach((event) => {
+        video.removeEventListener(event, hideControls);
+      });
+      interactionEvents.forEach((event) => {
+        document.removeEventListener(event, hideControls);
+      });
     };
   }, []);
 
@@ -72,7 +99,12 @@ export default function App() {
           controls={false}
           style={{
             objectFit: 'cover',
-          }}
+            // Additional inline styles for older Safari compatibility
+            WebkitMediaControls: 'none',
+            WebkitMediaControlsOverlayPlayButton: 'none',
+            WebkitMediaControlsPanel: 'none',
+            WebkitMediaControlsPlayButton: 'none',
+          } as React.CSSProperties}
         />
         {/* Subtle dark overlay */}
         <div className="absolute inset-0 bg-black/30 pointer-events-none" />
