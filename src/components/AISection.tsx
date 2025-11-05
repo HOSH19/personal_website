@@ -8,12 +8,22 @@ export function AISection() {
   const [isInitialized, setIsInitialized] = useState(false);
   const sectionRef = useRef(null);
 
-  // Set first project as selected on desktop only, after mount
+  // Set first project as selected on desktop only (not mobile/tablet/iPad)
   useEffect(() => {
     if (!isInitialized) {
-      // Check on next frame to ensure mobile detection has run
+      // Check on next frame to ensure detection has run
       requestAnimationFrame(() => {
-        const isDesktop = window.innerWidth >= 768;
+        // Check if it's a touch device (mobile, tablet, iPad)
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        // Check if it's iPad specifically (iPadOS)
+        const isiPad = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        // Check if it's a mobile/tablet by user agent
+        const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Only select first project if it's a real desktop (not touch device)
+        const isDesktop = !isTouchDevice && !isiPad && !isMobileUA;
+        
         if (isDesktop) {
           setSelectedProject(0);
         }

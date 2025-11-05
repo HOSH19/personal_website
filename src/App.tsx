@@ -12,34 +12,77 @@ export default function App() {
   const containerRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Hide video controls aggressively - compatible with older Safari versions
+  // Hide video controls aggressively - targeting newer Safari versions
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Set up video attributes BEFORE it loads (critical for newer Safari)
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('x-webkit-airplay', 'deny');
+    video.removeAttribute('controls');
+    video.controls = false;
+
     const hideControls = () => {
-      // Comprehensive webkit control hiding (works across Safari versions)
+      // Comprehensive webkit control hiding for newer Safari
       const properties = [
         '-webkit-media-controls',
         '-webkit-media-controls-overlay-play-button',
         '-webkit-media-controls-panel',
         '-webkit-media-controls-play-button',
-        '-webkit-media-controls-start-playback-button'
+        '-webkit-media-controls-start-playback-button',
+        '-webkit-media-controls-enclosure'
       ];
       
       properties.forEach(prop => {
         video.style.setProperty(prop, 'none', 'important');
       });
 
-      // Force remove any controls attribute (older Safari fallback)
+      // Force controls to false (newer Safari respects this more)
+      if (video.controls !== false) {
+        video.controls = false;
+      }
       video.removeAttribute('controls');
-      video.setAttribute('controls', 'false');
     };
 
-    // Hide controls immediately and repeatedly
+    // Hide controls BEFORE video loads (critical for newer Safari)
     hideControls();
     
-    // Use requestAnimationFrame to continuously hide (catches late-appearing controls)
+    // MutationObserver to catch shadow DOM elements (newer Safari uses shadow DOM for controls)
+    const observer = new MutationObserver(() => {
+      hideControls();
+      // Also try to hide any elements that might be controls
+      const videoContainer = video.parentElement;
+      if (videoContainer) {
+        const possibleControls = videoContainer.querySelectorAll('*');
+        possibleControls.forEach((el: any) => {
+          if (el && (el.classList?.contains('controls') || el.getAttribute('role') === 'button')) {
+            el.style.display = 'none';
+            el.style.visibility = 'hidden';
+            el.style.opacity = '0';
+            el.style.pointerEvents = 'none';
+          }
+        });
+      }
+    });
+
+    // Observe the video element and its parent for changes
+    observer.observe(video, {
+      attributes: true,
+      attributeFilter: ['controls', 'class', 'style'],
+      childList: true,
+      subtree: true
+    });
+    if (video.parentElement) {
+      observer.observe(video.parentElement, {
+        childList: true,
+        subtree: true
+      });
+    }
+    
+    // Use requestAnimationFrame to continuously hide (catches late-appearing controls in newer Safari)
     let rafId: number;
     const continuousHide = () => {
       hideControls();
@@ -47,37 +90,59 @@ export default function App() {
     };
     rafId = requestAnimationFrame(continuousHide);
 
-    // Hide controls on all video lifecycle events
-    const videoEvents = ['loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'play', 'playing', 'pause'];
+    // Hide controls on all video lifecycle events (newer Safari triggers these differently)
+    const videoEvents = ['loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'play', 'playing', 'pause', 'waiting', 'seeking', 'seeked'];
     videoEvents.forEach((event) => {
-      video.addEventListener(event, hideControls, { passive: true });
+      video.addEventListener(event, hideControls, { passive: true, capture: true });
     });
 
-    // Hide on any user interaction (before controls can appear)
-    const interactionEvents = ['touchstart', 'touchmove', 'touchend', 'click', 'scroll'];
+    // Hide on any user interaction (newer Safari shows controls on interaction)
+    const interactionEvents = ['touchstart', 'touchmove', 'touchend', 'click', 'scroll', 'mousemove', 'mousedown'];
     interactionEvents.forEach((event) => {
-      document.addEventListener(event, hideControls, { passive: true });
+      document.addEventListener(event, hideControls, { passive: true, capture: true });
+      window.addEventListener(event, hideControls, { passive: true, capture: true });
     });
 
-    // Try to play, and hide controls if autoplay fails
-    video.play().catch(() => {
-      hideControls();
-      const playOnInteraction = () => {
-        video.play();
-        hideControls();
-      };
-      document.addEventListener('touchstart', playOnInteraction, { once: true });
-      document.addEventListener('click', playOnInteraction, { once: true });
-    });
+    // Try to play immediately and keep trying
+    const attemptPlay = () => {
+      video.play()
+        .then(() => {
+          hideControls();
+          // Keep hiding even after play starts (newer Safari can show controls during playback)
+          const keepHiding = setInterval(() => {
+            hideControls();
+          }, 100);
+          setTimeout(() => clearInterval(keepHiding), 5000);
+        })
+        .catch(() => {
+          hideControls();
+          // Play on first user interaction
+          const playOnInteraction = () => {
+            video.play().then(() => hideControls());
+            hideControls();
+          };
+          document.addEventListener('touchstart', playOnInteraction, { once: true, capture: true });
+          document.addEventListener('click', playOnInteraction, { once: true, capture: true });
+        });
+    };
+
+    // Try immediately
+    attemptPlay();
+    
+    // Also try after a short delay (newer Safari sometimes needs this)
+    setTimeout(attemptPlay, 100);
+    setTimeout(attemptPlay, 500);
 
     // Cleanup
     return () => {
       cancelAnimationFrame(rafId);
+      observer.disconnect();
       videoEvents.forEach((event) => {
-        video.removeEventListener(event, hideControls);
+        video.removeEventListener(event, hideControls, { capture: true } as any);
       });
       interactionEvents.forEach((event) => {
-        document.removeEventListener(event, hideControls);
+        document.removeEventListener(event, hideControls, { capture: true } as any);
+        window.removeEventListener(event, hideControls, { capture: true } as any);
       });
     };
   }, []);
@@ -99,7 +164,7 @@ export default function App() {
           controls={false}
           style={{
             objectFit: 'cover',
-            // Additional inline styles for older Safari compatibility
+            // Additional inline styles for newer Safari compatibility
             WebkitMediaControls: 'none',
             WebkitMediaControlsOverlayPlayButton: 'none',
             WebkitMediaControlsPanel: 'none',
