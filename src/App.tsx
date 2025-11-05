@@ -50,19 +50,39 @@ export default function App() {
     // Hide controls BEFORE video loads (critical for newer Safari)
     hideControls();
     
-    // MutationObserver to catch shadow DOM elements (newer Safari uses shadow DOM for controls)
+    // MutationObserver to catch shadow DOM elements and ANY control-like elements
     const observer = new MutationObserver(() => {
       hideControls();
-      // Also try to hide any elements that might be controls
+      // Aggressively hide any elements that might be controls
       const videoContainer = video.parentElement;
       if (videoContainer) {
+        // Look for any button-like or control-like elements
         const possibleControls = videoContainer.querySelectorAll('*');
         possibleControls.forEach((el: any) => {
-          if (el && (el.classList?.contains('controls') || el.getAttribute('role') === 'button')) {
-            el.style.display = 'none';
-            el.style.visibility = 'hidden';
-            el.style.opacity = '0';
-            el.style.pointerEvents = 'none';
+          if (el && el !== video) {
+            const tagName = el.tagName?.toLowerCase();
+            const role = el.getAttribute('role');
+            const className = el.className || '';
+            const ariaLabel = el.getAttribute('aria-label') || '';
+            
+            // Check if it looks like a control element
+            const looksLikeControl = 
+              tagName === 'button' ||
+              role === 'button' ||
+              className.includes('control') ||
+              className.includes('play') ||
+              ariaLabel.toLowerCase().includes('play') ||
+              ariaLabel.toLowerCase().includes('video') ||
+              el.style?.cursor === 'pointer';
+            
+            if (looksLikeControl) {
+              el.style.display = 'none';
+              el.style.visibility = 'hidden';
+              el.style.opacity = '0';
+              el.style.pointerEvents = 'none';
+              el.style.width = '0';
+              el.style.height = '0';
+            }
           }
         });
       }
@@ -103,6 +123,27 @@ export default function App() {
       window.addEventListener(event, hideControls, { passive: true, capture: true });
     });
 
+    // Detect when video is paused (autoplay failed) and hide controls aggressively
+    const checkPausedState = () => {
+      if (video.paused) {
+        // Autoplay likely failed - hide controls very aggressively
+        hideControls();
+        // Try multiple times in quick succession
+        setTimeout(hideControls, 0);
+        setTimeout(hideControls, 10);
+        setTimeout(hideControls, 50);
+        setTimeout(hideControls, 100);
+      }
+    };
+
+    // Monitor paused state
+    video.addEventListener('pause', () => {
+      checkPausedState();
+      hideControls();
+    });
+    video.addEventListener('loadeddata', checkPausedState);
+    video.addEventListener('canplay', checkPausedState);
+
     // Try to play immediately and keep trying
     const attemptPlay = () => {
       video.play()
@@ -115,10 +156,26 @@ export default function App() {
           setTimeout(() => clearInterval(keepHiding), 5000);
         })
         .catch(() => {
+          // Autoplay blocked - hide controls VERY aggressively
           hideControls();
+          checkPausedState();
+          
+          // Hide controls continuously while paused
+          const hideWhilePaused = setInterval(() => {
+            if (video.paused) {
+              hideControls();
+              checkPausedState();
+            } else {
+              clearInterval(hideWhilePaused);
+            }
+          }, 50);
+          
           // Play on first user interaction
           const playOnInteraction = () => {
-            video.play().then(() => hideControls());
+            video.play().then(() => {
+              hideControls();
+              clearInterval(hideWhilePaused);
+            });
             hideControls();
           };
           document.addEventListener('touchstart', playOnInteraction, { once: true, capture: true });
@@ -129,9 +186,13 @@ export default function App() {
     // Try immediately
     attemptPlay();
     
-    // Also try after a short delay (newer Safari sometimes needs this)
+    // Also try after delays (for different network/device conditions)
     setTimeout(attemptPlay, 100);
     setTimeout(attemptPlay, 500);
+    setTimeout(() => {
+      checkPausedState();
+      attemptPlay();
+    }, 1000);
 
     // Cleanup
     return () => {
