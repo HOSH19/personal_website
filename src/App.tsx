@@ -26,7 +26,7 @@ export default function App() {
     video.controls = false;
 
     const hideControls = () => {
-      // Comprehensive webkit control hiding - compatible with both old and new Safari
+      // Comprehensive webkit control hiding for newer Safari
       const properties = [
         '-webkit-media-controls',
         '-webkit-media-controls-overlay-play-button',
@@ -36,38 +36,15 @@ export default function App() {
         '-webkit-media-controls-enclosure'
       ];
       
-      // Try multiple methods for compatibility
       properties.forEach(prop => {
-        // Method 1: setProperty with important (newer Safari)
-        try {
-          video.style.setProperty(prop, 'none', 'important');
-        } catch (e) {
-          // Method 2: setProperty without important (older Safari fallback)
-          try {
-            video.style.setProperty(prop, 'none');
-          } catch (e2) {
-            // Method 3: Direct style setting (oldest Safari fallback)
-            try {
-              (video.style as any)[prop.replace('-webkit-', 'webkit').replace(/-/g, '')] = 'none';
-            } catch (e3) {
-              // Ignore if all methods fail
-            }
-          }
-        }
+        video.style.setProperty(prop, 'none', 'important');
       });
 
-      // Force controls to false (works on both old and new Safari)
-      try {
+      // Force controls to false (newer Safari respects this more)
+      if (video.controls !== false) {
         video.controls = false;
-        video.removeAttribute('controls');
-        // Also try setting it as a string for older Safari
-        video.setAttribute('controls', 'false');
-      } catch (e) {
-        // Ignore errors
       }
-
-      // For older Safari: also try to hide via CSS classes
-      video.classList.add('no-controls');
+      video.removeAttribute('controls');
     };
 
     // Hide controls BEFORE video loads (critical for newer Safari)
@@ -131,11 +108,11 @@ export default function App() {
       video.play()
         .then(() => {
           hideControls();
-          // Keep hiding even after play starts (both old and new Safari can show controls)
+          // Keep hiding even after play starts (newer Safari can show controls during playback)
           const keepHiding = setInterval(() => {
             hideControls();
-          }, 50); // More frequent for older Safari
-          setTimeout(() => clearInterval(keepHiding), 10000); // Longer for older Safari
+          }, 100);
+          setTimeout(() => clearInterval(keepHiding), 5000);
         })
         .catch(() => {
           hideControls();
