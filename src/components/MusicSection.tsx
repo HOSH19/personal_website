@@ -10,20 +10,22 @@ export function MusicSection() {
       <div className="max-w-[95%] mx-auto relative z-10">
         {/* Section Header at Top */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
           className="mb-12 text-center"
         >
-          <div className="inline-flex items-center gap-3">
+          <motion.div 
+            initial={{ scale: 0, rotate: 180 }}
+            whileInView={{ scale: 1, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="inline-flex items-center gap-3 mb-6"
+          >
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg">
               <Music className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-5xl font-bold text-white">
               Create
             </h2>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Two Column Layout - Video takes majority */}
@@ -62,3 +64,4 @@ export function MusicSection() {
     </section>
   );
 }
+

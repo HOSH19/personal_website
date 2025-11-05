@@ -56,6 +56,7 @@ export default function Intro() {
 
   return (
     <motion.div
+      id="intro"
       className="relative w-full h-screen flex items-center justify-center overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

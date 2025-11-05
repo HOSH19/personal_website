@@ -7,6 +7,8 @@ import Intro from "./components/Intro";
 import { motion } from "motion/react";
 import { useRef, useEffect } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+import { track } from "@vercel/analytics";
 
 export default function App() {
   const containerRef = useRef(null);
@@ -93,6 +95,49 @@ export default function App() {
     };
   }, []);
 
+  // Track section views for analytics
+  useEffect(() => {
+    const sections = ['intro', 'ai', 'photography', 'music'];
+    const observedSections = new Set<string>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+            const sectionId = entry.target.id;
+            if (sectionId && !observedSections.has(sectionId)) {
+              observedSections.add(sectionId);
+              track('section_view', {
+                section: sectionId,
+                path: `/${sectionId}`,
+              });
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of section is visible
+        rootMargin: '-20% 0px -20% 0px', // Only count when section is well in view
+      }
+    );
+
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      sections.forEach((sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          observer.unobserve(element);
+        }
+      });
+    };
+  }, []);
+
   return (
     <div ref={containerRef} className="min-h-screen bg-gray-900 relative">
       {/* Fixed Video Background for entire website - using canvas to bypass Safari controls */}
@@ -154,6 +199,7 @@ export default function App() {
       </div>
       
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
