@@ -285,3 +285,32 @@ html {
 .background-video > * {
   pointer-events: none !important;
 }
+
+/* Additional class-based hiding for older Safari compatibility */
+.background-video.no-controls,
+.background-video.no-controls::-webkit-media-controls,
+.background-video.no-controls::-webkit-media-controls-overlay-play-button,
+.background-video.no-controls::-webkit-media-controls-panel,
+.background-video.no-controls::-webkit-media-controls-play-button {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Extra aggressive hiding for Safari 18.x and older */
+video.background-video {
+  -webkit-appearance: none !important;
+}
+
+video.background-video[controls="false"]::-webkit-media-controls {
+  display: none !important;
+}
+
+video.background-video[controls="false"]::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
