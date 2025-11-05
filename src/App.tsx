@@ -25,6 +25,11 @@ export default function App() {
     // Hide controls immediately
     hideControls();
 
+    // Hide controls on key video events (without interfering with loading)
+    video.addEventListener('loadstart', hideControls);
+    video.addEventListener('loadeddata', hideControls);
+    video.addEventListener('play', hideControls);
+
     // Try to play, and hide controls if autoplay fails
     video.play().catch(() => {
       // Autoplay prevented - hide controls anyway
@@ -37,6 +42,17 @@ export default function App() {
       document.addEventListener('touchstart', playOnInteraction, { once: true });
       document.addEventListener('click', playOnInteraction, { once: true });
     });
+
+    // Also hide on scroll (since you mentioned it disappears when scrolling)
+    const hideOnScroll = () => hideControls();
+    window.addEventListener('scroll', hideOnScroll, { passive: true });
+
+    return () => {
+      video.removeEventListener('loadstart', hideControls);
+      video.removeEventListener('loadeddata', hideControls);
+      video.removeEventListener('play', hideControls);
+      window.removeEventListener('scroll', hideOnScroll);
+    };
   }, []);
 
   return (
@@ -46,7 +62,7 @@ export default function App() {
         <video
           ref={videoRef}
           src="/images/photography/vid.mp4"
-          className="w-full h-full object-cover pointer-events-none [&::-webkit-media-controls]:hidden [&::-webkit-media-controls-overlay-play-button]:hidden"
+          className="background-video w-full h-full object-cover pointer-events-none [&::-webkit-media-controls]:hidden [&::-webkit-media-controls-overlay-play-button]:hidden"
           autoPlay
           muted
           loop

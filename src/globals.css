@@ -226,37 +226,37 @@ html {
   }
 }
 
-/* Hide all video controls globally */
-video::-webkit-media-controls {
+/* Hide video controls only for background video */
+.background-video::-webkit-media-controls {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
 }
 
-video::-webkit-media-controls-panel {
+.background-video::-webkit-media-controls-panel {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
 }
 
-video::-webkit-media-controls-play-button {
+.background-video::-webkit-media-controls-play-button {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
 }
 
-video::-webkit-media-controls-start-playback-button {
+.background-video::-webkit-media-controls-start-playback-button {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
 }
 
-video::-webkit-media-controls-overlay-play-button {
+.background-video::-webkit-media-controls-overlay-play-button {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
 }
 
-video::-webkit-media-controls-enclosure {
+.background-video::-webkit-media-controls-enclosure {
   display: none !important;
 }
