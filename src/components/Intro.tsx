@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Github, Linkedin, Instagram, Send } from "lucide-react";
+import { Github, Linkedin, Instagram, Send, FileText } from "lucide-react";
 import { useState } from "react";
 
 export default function Intro() {
@@ -51,6 +51,12 @@ export default function Intro() {
       icon: Send,
       url: "https://t.me/ShuHannn",
       color: "hover:text-cyan-400"
+    },
+    {
+      name: "Resume",
+      icon: FileText,
+      url: "/resume/shu_han_ho_resume.pdf",
+      color: "hover:text-yellow-400"
     }
   ];
 
